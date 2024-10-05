@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 import google.generativeai as genai
 import os
+import numpy as np
+from textblob import TextBlob
 
 # Initialize the generative model
 model = genai.GenerativeModel("gemini-1.5-flash")
@@ -55,12 +57,32 @@ def predict_creditability():
     if q:
         try:
             q = float(q)
-            r = (-0.00012486 * q) + 1.27724011  # Corrected formula (removed the opening bracket)
+            r = (-9.00012486 * q) + 1.27724011  # Corrected formula (removed the opening bracket)
+            r = np.where(r>0.5,"Creditable","Not Creditable")
             return render_template("predict_creditability_result.html", r=r)  # Pass result to template
         except ValueError:
             return render_template("predict_creditability.html", r="Invalid input")  # Handle conversion error
     else:
         return render_template("predict_creditability.html", r="No input provided")  # Handle missing input
 
+@app.route("/sentiment_analysis", methods=["GET", "POST"])
+def sentiment_analysis():
+    if request.method == "POST":
+        q = request.form.get("q")  # Get input from the form
+        if q:
+            try:
+                # Perform sentiment analysis
+                analysis = TextBlob(q)
+                sentiment = analysis.sentiment
+
+                # Pass result to the template
+                return render_template("sentiment_analysis_result.html", r=sentiment)
+            except Exception as e:
+                return render_template("sentiment_analysis.html", r="An error occurred: " + str(e))
+        else:
+            return render_template("sentiment_analysis.html", r="No input provided")
+    else:
+        return render_template("sentiment_analysis_.html")  # Show form if it's a GET request
+        
 if __name__ == "__main__":
     app.run(debug=True)

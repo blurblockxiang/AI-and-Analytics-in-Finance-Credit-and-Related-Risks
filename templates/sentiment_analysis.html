@@ -1,0 +1,17 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">    
+</head>
+<body>
+    <div class="container">
+        <h2>Enter text for Sentiment Analysis</h2>
+        <form action="/sentiment_analysis" method="post">
+            <h4>Please enter text</h4>
+            <p><input type="text" name="q" required></p>
+            <p><input type="submit" value="Enter"></p>
+        </form>
+    </div>
+</body> 
+
+
+
